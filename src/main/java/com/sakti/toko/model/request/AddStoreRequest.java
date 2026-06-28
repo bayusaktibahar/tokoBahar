@@ -1,0 +1,18 @@
+package com.sakti.toko.model.request;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.UUID;
+
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class AddStoreRequest {
+    private UUID user;
+    private String storeName;
+}
