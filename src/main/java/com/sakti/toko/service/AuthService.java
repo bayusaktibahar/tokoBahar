@@ -1,6 +1,7 @@
 package com.sakti.toko.service;
 
 import com.sakti.toko.common.extension.AESOperation;
+import com.sakti.toko.data.entity.Role;
 import com.sakti.toko.data.entity.User;
 import com.sakti.toko.data.repository.UserRepository;
 import com.sakti.toko.model.dto.UserDTO;
@@ -57,7 +58,7 @@ public class AuthService {
         var user = User.builder()
                 .email(registerRequest.getEmail())
                 .password(AESOperation.encode(registerRequest.getPassword()))
-                .role("User")
+                .role(Role.valueOf("User"))
                 .createdAt(LocalDateTime.now())
                 .build();
 
