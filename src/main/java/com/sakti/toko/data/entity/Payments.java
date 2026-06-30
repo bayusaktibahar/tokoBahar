@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Payments {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column (name = "parentOrderNumber", nullable = false)
     private String parentOrderNumber;
@@ -23,7 +23,7 @@ public class Payments {
     private String paymentMethod;
 
     @Enumerated(EnumType.STRING)
-    @Column (name = "status", nullable = false)
+    @Column (nullable = false)
     private PaymentStatus status;
 
     @Column (name = "transactionId")
