@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrdersDTO {
-    private long id;
+    private Long id;
     private String parentOrderNumber;
     private String orderNumber;
     private UserDTO userDTO;
