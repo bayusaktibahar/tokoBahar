@@ -33,7 +33,7 @@ public class Orders {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private OrderStatus status;
+    private OrderStatus orderStatus;
 
     @Column (name = "totalPrice", nullable = false)
     private BigDecimal totalPrice;

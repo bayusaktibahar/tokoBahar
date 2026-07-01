@@ -19,7 +19,7 @@ public class PaymentsDetailService {
                 .id(payments.getId())
                 .parentOrderNumber(payments.getParentOrderNumber())
                 .paymentMethod(payments.getPaymentMethod())
-                .status(payments.getStatus())
+                .paymentStatus(payments.getPaymentStatus())
                 .transactionId(payments.getTransactionId())
                 .createdAt(payments.getCreatedAt())
                 .build();

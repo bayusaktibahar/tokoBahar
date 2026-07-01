@@ -14,7 +14,7 @@ public class PaymentsDTO {
     private Long id;
     private String parentOrderNumber;
     private String paymentMethod;
-    private PaymentStatus status;
+    private PaymentStatus paymentStatus;
     private String transactionId;
     private LocalDateTime createdAt;
 }

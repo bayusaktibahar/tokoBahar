@@ -1,7 +1,7 @@
 package com.sakti.toko.service.details;
 
 import com.sakti.toko.data.entity.OrderItems;
-import com.sakti.toko.model.dto.OrdersItemsDTO;
+import com.sakti.toko.model.dto.OrderItemsDTO;
 import com.sakti.toko.model.dto.ProductDTO;
 
 import lombok.AllArgsConstructor;
@@ -13,13 +13,14 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class OrderItemsDetailService {
+
     private final ProductDetailService productDetailService;
 
-    public OrdersItemsDTO getOrdersItemsDetails(OrderItems orderItems) {
+    public OrderItemsDTO getOrderItemsDetails(OrderItems orderItems) {
 
         ProductDTO productDTO = productDetailService.getProductDetailWithoutReview(orderItems.getProduct());
 
-        return OrdersItemsDTO.builder()
+        return OrderItemsDTO.builder()
                 .id(orderItems.getId())
                 .productDTO(productDTO)
                 .quantity(orderItems.getQuantity())
@@ -28,9 +29,9 @@ public class OrderItemsDetailService {
 
     }
 
-    public List<OrdersItemsDTO> getOrdersItemsList(List<OrderItems> orderItemsList) {
+    public List<OrderItemsDTO> getOrdersItemsList(List<OrderItems> orderItemsList) {
         return orderItemsList.stream()
-                .map(this::getOrdersItemsDetails)
+                .map(this::getOrderItemsDetails)
                 .collect(Collectors.toList());
     }
 }

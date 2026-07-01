@@ -3,7 +3,6 @@ package com.sakti.toko.service.details;
 import com.sakti.toko.data.entity.Product;
 import com.sakti.toko.data.entity.Reviews;
 import com.sakti.toko.data.repository.ReviewsRepository;
-import com.sakti.toko.data.repository.UserRepository;
 import com.sakti.toko.model.dto.ProductDTO;
 import com.sakti.toko.model.dto.ReviewsDTO;
 import com.sakti.toko.model.dto.StoreDTO;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ProductDetailService {
 
-    private final UserRepository userRepository;
+    private final UserDetailService userDetailService;
     private final StoreDetailService storeDetailService;
     private final ReviewsRepository reviewsRepository;
 
@@ -69,14 +68,7 @@ public class ProductDetailService {
 
     private ReviewsDTO getReviewDetail(Reviews review) {
 
-        UserDTO userDTO = userRepository.findById(review.getUser().getId())
-                .map(user -> UserDTO.builder()
-                        .id(user.getId())
-                        .email(user.getEmail())
-                        .role(user.getRole())
-                        .createdAt(user.getCreatedAt())
-                        .build())
-                .orElse(null);
+        UserDTO userDTO = userDetailService.getUserDetailWithoutSession(review.getUser());
 
         StoreDTO storeDTO = storeDetailService.getStoreDetails(review.getStore());
 

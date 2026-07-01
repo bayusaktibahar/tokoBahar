@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Setter
@@ -15,6 +16,7 @@ public class OrdersDTO {
     private Long id;
     private String parentOrderNumber;
     private String orderNumber;
+    private List<OrderItemsDTO> orderItems;
     private UserDTO userDTO;
     private StoreDTO storeDTO;
     private OrderStatus orderStatus;
