@@ -12,5 +12,4 @@ import java.util.UUID;
 public interface StoreRepository extends JpaRepository<Store, Long> {
     <optional> Optional<Store> findByStoreName(String name);
 
-    Optional<Store> findById(UUID user);
 }

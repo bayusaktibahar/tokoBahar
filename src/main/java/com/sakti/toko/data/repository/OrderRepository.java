@@ -1,5 +1,6 @@
 package com.sakti.toko.data.repository;
 
+import com.sakti.toko.data.entity.OrderStatus;
 import com.sakti.toko.data.entity.Orders;
 import com.sakti.toko.data.entity.Store;
 import com.sakti.toko.data.entity.User;
@@ -15,5 +16,8 @@ public interface OrderRepository extends JpaRepository<Orders, Long> {
 
     List<Orders> findByStore(Store store);
 
-    List<Orders> findByParentOrderNumber(String parentOrderNumber);
+    List<Orders> findByOrderStatus(OrderStatus orderStatus);
+
+
+
 }
