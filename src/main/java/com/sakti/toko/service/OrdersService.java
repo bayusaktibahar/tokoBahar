@@ -1,10 +1,6 @@
 package com.sakti.toko.service;
 
-
-import com.sakti.toko.data.entity.OrderStatus;
 import com.sakti.toko.data.entity.Orders;
-import com.sakti.toko.data.entity.Store;
-import com.sakti.toko.data.entity.User;
 import com.sakti.toko.data.repository.OrderRepository;
 import com.sakti.toko.data.repository.StoreRepository;
 import com.sakti.toko.data.repository.UserRepository;

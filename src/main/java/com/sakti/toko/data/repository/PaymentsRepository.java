@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface PaymentsRepository extends JpaRepository<Payments, Long> {
 
-    Optional<Payments> findByParentsOrderNumber(String parentOrderNumber);
+    Optional<Payments> findByParentOrderNumber(String parentOrderNumber);
 
 }
