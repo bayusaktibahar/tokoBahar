@@ -39,6 +39,8 @@ public class AuthService {
         }
 
         HttpSession session = httpServletRequest.getSession(true);
+        session.setAttribute("USER", user.getEmail());
+
         var userDetails = userDetailService.getUserDetails(user, session.getId());
 
         return new ApiResponse<>(true, 200, "ok",  userDetails);
@@ -58,7 +60,7 @@ public class AuthService {
         var user = User.builder()
                 .email(registerRequest.getEmail())
                 .password(AESOperation.encode(registerRequest.getPassword()))
-                .role(Role.valueOf("User"))
+                .role(Role.BUYER)
                 .createdAt(LocalDateTime.now())
                 .build();
 

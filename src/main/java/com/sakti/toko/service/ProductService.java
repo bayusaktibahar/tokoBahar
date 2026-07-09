@@ -3,7 +3,9 @@ package com.sakti.toko.service;
 import com.sakti.toko.data.entity.Product;
 import com.sakti.toko.data.repository.ProductRepository;
 import com.sakti.toko.data.repository.StoreRepository;
+import com.sakti.toko.data.repository.UserRepository;
 import com.sakti.toko.model.dto.ProductDTO;
+import com.sakti.toko.model.dto.UserDTO;
 import com.sakti.toko.model.request.AddProductRequest;
 import com.sakti.toko.model.request.ApiResponse;
 import com.sakti.toko.model.request.UpdateProductRequest;
@@ -20,6 +22,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductDetailService productDetailService;
     private final StoreRepository storeRepository;
+    private final UserRepository userRepository;
 
     public ApiResponse<List<ProductDTO>> getAllProducts() {
         List<Product> products = productRepository.findAll();
@@ -61,7 +64,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ApiResponse<ProductDTO> addProduct(AddProductRequest addProductRequest) {
+    public ApiResponse<ProductDTO> addProduct(AddProductRequest addProductRequest, UserDTO currentUser) {
         var targetStore = storeRepository.findById(addProductRequest.getStoreId());
 
         if (targetStore.isEmpty()) {
@@ -138,7 +141,7 @@ public class ProductService {
         );
     }
 
-    public ApiResponse<ProductDTO> deleteProduct(long productId) {
+    public ApiResponse<ProductDTO> deleteProduct(long productId, UserDTO currentUser) {
         var targetProduct = productRepository.findById(productId);
 
         if (targetProduct.isEmpty()) {
@@ -146,6 +149,17 @@ public class ProductService {
                     false,
                     404,
                     "Product not found",
+                    null
+            );
+        }
+
+        var user = userRepository.findById(currentUser.getId()).orElseThrow();
+
+        if (targetProduct.get().getStore().getUser() != user){
+            return new ApiResponse<>(
+                    false,
+                    401,
+                    "U don't have permission to delete this product",
                     null
             );
         }

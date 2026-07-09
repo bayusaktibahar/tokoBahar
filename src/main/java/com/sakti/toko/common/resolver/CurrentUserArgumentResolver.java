@@ -6,6 +6,7 @@ import com.sakti.toko.data.repository.UserRepository;
 import com.sakti.toko.model.dto.UserDTO;
 import com.sakti.toko.service.SessionService;
 import com.sakti.toko.service.details.UserDetailService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -51,12 +52,9 @@ public class CurrentUserArgumentResolver implements HandlerMethodArgumentResolve
         }
 
         // Extract token from Authorization header
-        String headerToken = request.getHeader("Authorization");
-        if (headerToken == null || !headerToken.startsWith("Bearer ")) {
-            return null;
-        }
-
-        String token = headerToken.split(" ")[1].trim();
+        HttpSession httpSession = request.getSession(false);
+        if (httpSession == null) return null;
+        String token = httpSession.getId();
         var session = sessionService.getSessionById(token);
 
         if (session == null) {

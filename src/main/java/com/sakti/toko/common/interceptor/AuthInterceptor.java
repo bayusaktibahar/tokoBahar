@@ -6,6 +6,7 @@ import java.util.List;
 import com.sakti.toko.common.annotation.AuthCheck;
 import com.sakti.toko.model.request.ApiResponse;
 import com.sakti.toko.service.SessionService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
@@ -35,10 +36,8 @@ public class AuthInterceptor implements HandlerInterceptor {
                     return false;
                 }
 
-                String token = headerToken.split(" ")[1].trim();
-                var session = sessionService.getSessionById(token);
-
-                if (session == null) {
+                HttpSession httpSession = request.getSession(false);
+                if (httpSession == null || httpSession.getAttribute("USER") == null) {
                     writeUnauthorizedResponse(response);
                     return false;
                 }
@@ -51,7 +50,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         ApiResponse<List<Object>> apiResponse = new ApiResponse<>(
                 false,
                 403,
-                "yeuh",
+                "Lu Ga Punya Akses Kocak",
                 null);
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

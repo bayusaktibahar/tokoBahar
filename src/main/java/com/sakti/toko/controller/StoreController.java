@@ -1,6 +1,9 @@
 package com.sakti.toko.controller;
 
+import com.sakti.toko.common.annotation.AuthCheck;
+import com.sakti.toko.common.annotation.CurrentUser;
 import com.sakti.toko.model.dto.StoreDTO;
+import com.sakti.toko.model.dto.UserDTO;
 import com.sakti.toko.model.request.AddStoreRequest;
 import com.sakti.toko.model.request.UpdateStoreRequest;
 import com.sakti.toko.model.request.ApiResponse;
@@ -32,8 +35,9 @@ public class StoreController {
     }
 
     @PostMapping("/Add")
-    public ApiResponse<StoreDTO> addStore(@RequestBody AddStoreRequest addStoreRequest){
-        return storeService.addStore(addStoreRequest);
+    @AuthCheck
+    public ApiResponse<StoreDTO> addStore(@RequestBody AddStoreRequest addStoreRequest, @CurrentUser UserDTO currentUser){
+        return storeService.addStore(addStoreRequest, currentUser);
     }
 
     @PostMapping("/Update/{id}")
@@ -42,7 +46,8 @@ public class StoreController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<StoreDTO> deleteStore(@PathVariable long id){
-        return storeService.deleteStore(id);
+    @AuthCheck
+    public ApiResponse<StoreDTO> deleteStore(@PathVariable long id, @CurrentUser UserDTO currentUser ){
+        return storeService.deleteStore(id,  currentUser);
     }
 }

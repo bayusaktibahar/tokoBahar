@@ -34,6 +34,10 @@ spring:
 #            enable: true
 #        debug: true
 
+app:
+  cors:
+    allowed-origin: http://localhost:5174
+
 server:
   port: 8081
   servlet:

@@ -4,6 +4,7 @@ import com.sakti.toko.data.entity.Store;
 import com.sakti.toko.data.repository.StoreRepository;
 import com.sakti.toko.data.repository.UserRepository;
 import com.sakti.toko.model.dto.StoreDTO;
+import com.sakti.toko.model.dto.UserDTO;
 import com.sakti.toko.model.request.AddStoreRequest;
 import com.sakti.toko.model.request.UpdateStoreRequest;
 import com.sakti.toko.model.request.ApiResponse;
@@ -61,7 +62,8 @@ public class StoreService {
         );
     }
 
-    public ApiResponse<StoreDTO> addStore(AddStoreRequest addStoreRequest) {
+    @Transactional
+    public ApiResponse<StoreDTO> addStore(AddStoreRequest addStoreRequest, UserDTO currentUser) {
         var targetUser = userRepository.findById(addStoreRequest.getUser());
 
         if (targetUser.isEmpty()) {
@@ -122,7 +124,8 @@ public class StoreService {
         );
     }
 
-    public ApiResponse<StoreDTO> deleteStore(long storeId) {
+    @Transactional
+    public ApiResponse<StoreDTO> deleteStore(long storeId, UserDTO currentUser) {
         var targetStore = storeRepository.findById(storeId);
 
         if (targetStore.isEmpty()) {
@@ -130,6 +133,17 @@ public class StoreService {
                     false,
                     404,
                     "Store not found",
+                    null
+            );
+        }
+
+        var user = userRepository.findById(currentUser.getId()).orElseThrow();
+
+        if (targetStore.get().getUser() != user){
+            return new ApiResponse<>(
+                    false,
+                    401,
+                    "U don't have permission to delete this store",
                     null
             );
         }

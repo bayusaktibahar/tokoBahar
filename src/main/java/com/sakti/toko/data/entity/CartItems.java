@@ -25,4 +25,5 @@ public class CartItems {
 
     @Column(nullable = false)
     private Integer quantity;
+
 }

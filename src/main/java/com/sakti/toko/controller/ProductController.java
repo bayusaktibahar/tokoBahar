@@ -1,6 +1,9 @@
 package com.sakti.toko.controller;
 
+import com.sakti.toko.common.annotation.AuthCheck;
+import com.sakti.toko.common.annotation.CurrentUser;
 import com.sakti.toko.model.dto.ProductDTO;
+import com.sakti.toko.model.dto.UserDTO;
 import com.sakti.toko.model.request.AddProductRequest;
 import com.sakti.toko.model.request.ApiResponse;
 import com.sakti.toko.model.request.UpdateProductRequest;
@@ -32,8 +35,9 @@ public class ProductController {
     }
 
     @PostMapping("/Add")
-    public ApiResponse<ProductDTO> addProduct(@RequestBody AddProductRequest addProductRequest) {
-        return productService.addProduct(addProductRequest);
+    @AuthCheck
+    public ApiResponse<ProductDTO> addProduct(@RequestBody AddProductRequest addProductRequest, @CurrentUser UserDTO currentUser) {
+        return productService.addProduct(addProductRequest,  currentUser);
     }
 
     @PutMapping("/Update/{id}")
@@ -42,8 +46,10 @@ public class ProductController {
     }
 
     @DeleteMapping("Delete/{id}")
-    public ApiResponse<ProductDTO> deleteProduct(@PathVariable long id) {
-        return productService.deleteProduct(id);
+    @AuthCheck
+    public ApiResponse<ProductDTO> deleteProduct(@PathVariable long id, @CurrentUser UserDTO currentUser) {
+        return productService.deleteProduct(id, currentUser);
     }
 
 }
+
