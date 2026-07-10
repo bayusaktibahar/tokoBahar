@@ -29,6 +29,14 @@ public class AuthService {
 
     public ApiResponse<UserDTO> login(LoginRequest loginRequest, HttpServletRequest  httpServletRequest) {
         var userOptional = userRepository.findByEmailIgnoreCase(loginRequest.getEmail());
+
+        if (userOptional.isEmpty()) {
+            return new ApiResponse<>(false,
+                    404,
+                    "Email not found",
+                    null);
+        }
+
         var user = userOptional.get();
 
         if (!AESOperation.matches(loginRequest.getPassword(), user.getPassword())) {
@@ -38,12 +46,25 @@ public class AuthService {
                     null);
         }
 
+        if (user.getIsSuspended()) {
+            return new ApiResponse<>(
+                    false,
+                    403,
+                    "Your account has been suspended",
+                    null
+            );
+        }
+
         HttpSession session = httpServletRequest.getSession(true);
         session.setAttribute("USER", user.getEmail());
 
         var userDetails = userDetailService.getUserDetails(user, session.getId());
 
-        return new ApiResponse<>(true, 200, "ok",  userDetails);
+        return new ApiResponse<>(
+                true,
+                200,
+                "ok",
+                userDetails);
     }
 
     @Transactional

@@ -34,18 +34,19 @@ public class ProductController {
         return productService.getProductByName(name);
     }
 
-    @PostMapping("/Add")
+    @PostMapping("/add")
     @AuthCheck
     public ApiResponse<ProductDTO> addProduct(@RequestBody AddProductRequest addProductRequest, @CurrentUser UserDTO currentUser) {
-        return productService.addProduct(addProductRequest,  currentUser);
+        return productService.addProduct(addProductRequest, currentUser);
     }
 
-    @PutMapping("/Update/{id}")
-    public ApiResponse<ProductDTO> updateProduct(@PathVariable long id,  @RequestBody UpdateProductRequest updateProductRequest) {
-        return productService.updateProduct(id, updateProductRequest);
+    @PutMapping("/update/{id}")
+    @AuthCheck
+    public ApiResponse<ProductDTO> updateProduct(@PathVariable long id,  @RequestBody UpdateProductRequest updateProductRequest, @CurrentUser UserDTO currentUser) {
+        return productService.updateProduct(id, updateProductRequest,  currentUser);
     }
 
-    @DeleteMapping("Delete/{id}")
+    @DeleteMapping("delete/{id}")
     @AuthCheck
     public ApiResponse<ProductDTO> deleteProduct(@PathVariable long id, @CurrentUser UserDTO currentUser) {
         return productService.deleteProduct(id, currentUser);

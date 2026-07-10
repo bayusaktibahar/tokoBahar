@@ -22,6 +22,7 @@ public class UserDetailService {
                 .email(user.getEmail())
                 .role(user.getRole())
                 .createdAt(user.getCreatedAt())
+                .isSuspended(user.getIsSuspended())
                 .build();
 
     }
@@ -33,6 +34,7 @@ public class UserDetailService {
                 .email(user.getEmail())
                 .role(user.getRole())
                 .createdAt(user.getCreatedAt())
+                .isSuspended(user.getIsSuspended())
                 .build();
 
     }

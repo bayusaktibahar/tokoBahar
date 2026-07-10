@@ -13,6 +13,5 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckoutRequest {
-    private UUID user;
     private String paymentMethod;
 }

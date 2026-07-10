@@ -1,6 +1,9 @@
 package com.sakti.toko.controller;
 
 
+import com.sakti.toko.common.annotation.AuthCheck;
+import com.sakti.toko.common.annotation.CurrentUser;
+import com.sakti.toko.model.dto.UserDTO;
 import com.sakti.toko.model.request.ApiResponse;
 import com.sakti.toko.model.request.CheckoutRequest;
 import com.sakti.toko.service.CheckoutService;
@@ -16,8 +19,9 @@ public class CheckoutController {
     private final CheckoutService checkoutService;
 
     @PostMapping
-    public ApiResponse<String> checkout(@RequestBody CheckoutRequest checkoutRequest) {
-        return checkoutService.checkout(checkoutRequest);
+    @AuthCheck
+    public ApiResponse<String> checkout(@RequestBody CheckoutRequest checkoutRequest, @CurrentUser UserDTO currentUser) {
+        return checkoutService.checkout(checkoutRequest, currentUser);
     }
 
 }

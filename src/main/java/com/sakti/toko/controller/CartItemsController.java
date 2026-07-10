@@ -31,7 +31,7 @@ public class CartItemsController {
         return cartItemsService.getCartItemById(id);
     }
 
-    @PostMapping("/Add")
+    @PostMapping("/add")
     @AuthCheck
     public  ApiResponse<CartItemsDTO> addCartItem(@RequestBody AddCartItemsRequest addCartItemRequest, @CurrentUser UserDTO currentUser){
         return cartItemsService.addCartItem(addCartItemRequest, currentUser );

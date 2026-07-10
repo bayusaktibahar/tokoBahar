@@ -13,6 +13,5 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddStoreRequest {
-    private UUID user;
     private String storeName;
 }

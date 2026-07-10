@@ -20,4 +20,7 @@ public class Store {
 
     @Column(name = "store_name", unique = true, nullable = false)
     private String storeName;
+
+    @Column(nullable = false)
+    private Boolean isSuspended = false;
 }

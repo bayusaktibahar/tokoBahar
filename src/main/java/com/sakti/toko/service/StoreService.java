@@ -1,5 +1,6 @@
 package com.sakti.toko.service;
 
+import com.sakti.toko.data.entity.Role;
 import com.sakti.toko.data.entity.Store;
 import com.sakti.toko.data.repository.StoreRepository;
 import com.sakti.toko.data.repository.UserRepository;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -64,7 +64,7 @@ public class StoreService {
 
     @Transactional
     public ApiResponse<StoreDTO> addStore(AddStoreRequest addStoreRequest, UserDTO currentUser) {
-        var targetUser = userRepository.findById(addStoreRequest.getUser());
+        var targetUser = userRepository.findById(currentUser.getId());
 
         if (targetUser.isEmpty()) {
             return new ApiResponse<>(
@@ -77,6 +77,16 @@ public class StoreService {
 
         var userStore = targetUser.get();
 
+        var existingStore = storeRepository.findByUser(userStore);
+
+        if(existingStore.isPresent()) {
+            return new ApiResponse<>(
+                    false,
+                    402,
+                    "You are already have a store",
+                    null
+            );
+        }
         var store = new Store();
         store.setUser(userStore);
         store.setStoreName(addStoreRequest.getStoreName());
@@ -159,4 +169,46 @@ public class StoreService {
                 null
         );
     }
+
+    @Transactional
+    public ApiResponse<StoreDTO> suspendStore(long storeId, UserDTO currentUser) {
+
+        if (!currentUser.getRole().equals(Role.ADMIN)) {
+            return new ApiResponse<>(
+                    false,
+                    403,
+                    "You are not allowed to perform this action",
+                    null
+            );
+        }
+
+        var targetStore = storeRepository.findById(storeId);
+
+        if (targetStore.isEmpty()) {
+            return new ApiResponse<>(
+                    false,
+                    404,
+                    "Store not found",
+                    null
+            );
+        }
+
+        var storeSuspended = targetStore.get();
+
+        storeSuspended.setIsSuspended(!storeSuspended.getIsSuspended());
+
+        storeRepository.save(storeSuspended);
+
+        var result = storeDetailService.getStoreDetails(storeSuspended);
+
+        return new ApiResponse<>(
+                true,
+                200,
+                storeSuspended.getIsSuspended() ? "Store Suspended" : "Store Unsuspended",
+                result
+        );
+    }
 }
+
+
+

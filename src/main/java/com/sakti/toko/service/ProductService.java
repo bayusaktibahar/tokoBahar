@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -65,18 +66,39 @@ public class ProductService {
 
     @Transactional
     public ApiResponse<ProductDTO> addProduct(AddProductRequest addProductRequest, UserDTO currentUser) {
-        var targetStore = storeRepository.findById(addProductRequest.getStoreId());
+        var targetUser = userRepository.findById(currentUser.getId());
+
+        if (targetUser.isEmpty())
+            return new ApiResponse<>(
+                    false,
+                    404,
+                    "User Not Found",
+                    null
+            );
+
+        var user = targetUser.get();
+
+        var targetStore = storeRepository.findByUser(user);
 
         if (targetStore.isEmpty()) {
             return new ApiResponse<>(
                     false,
                     404,
-                    "Store not found",
+                    "You don't have a store",
                     null
             );
         }
 
         var store = targetStore.get();
+
+        if (store.getIsSuspended()) {
+            return new ApiResponse<>(
+                    false,
+                    403,
+                    "Your store has been suspended",
+                    null
+            );
+        }
 
         var product = new Product();
         product.setStore(store);
@@ -98,7 +120,30 @@ public class ProductService {
     }
 
     @Transactional
-    public ApiResponse<ProductDTO> updateProduct(long productId, UpdateProductRequest request) {
+    public ApiResponse<ProductDTO> updateProduct(long productId, UpdateProductRequest request, UserDTO currentUser) {
+        var targetUser = userRepository.findById(currentUser.getId());
+
+        if (targetUser.isEmpty())
+            return new ApiResponse<>(
+                    false,
+                    404,
+                    "User not Found",
+                    null
+            );
+
+        var user = targetUser.get();
+
+        var tagetStore = storeRepository.findByUser(user);
+
+        if (tagetStore.isEmpty())
+
+            return new ApiResponse<>(
+                    false,
+                    404,
+                    "you don't have a store",
+                    null
+            );
+
         var targetProduct = productRepository.findById(productId);
 
         if (targetProduct.isEmpty()) {
@@ -111,6 +156,17 @@ public class ProductService {
         }
 
         var productToUpdate = targetProduct.get();
+
+        var store = tagetStore.get();
+
+        if (!Objects.equals(productToUpdate.getStore().getId(), store.getId())) {
+            return new ApiResponse<>(
+                    false,
+                    403,
+                    "You don't have permission to update this product",
+                    null
+            );
+        }
 
         if (request.getName() != null)  {
             productToUpdate.setName(request.getName());
@@ -135,13 +191,15 @@ public class ProductService {
 
         return new ApiResponse<>(
                 true,
-                202,
+                201,
                 "Data Updated Successfully",
                 result
         );
     }
 
+    @Transactional
     public ApiResponse<ProductDTO> deleteProduct(long productId, UserDTO currentUser) {
+
         var targetProduct = productRepository.findById(productId);
 
         if (targetProduct.isEmpty()) {
@@ -155,10 +213,10 @@ public class ProductService {
 
         var user = userRepository.findById(currentUser.getId()).orElseThrow();
 
-        if (targetProduct.get().getStore().getUser() != user){
+        if (!targetProduct.get().getStore().getUser().getId().equals(user.getId())) {
             return new ApiResponse<>(
                     false,
-                    401,
+                    403,
                     "U don't have permission to delete this product",
                     null
             );

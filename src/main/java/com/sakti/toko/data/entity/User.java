@@ -29,6 +29,9 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @Column(nullable = false)
+    private Boolean isSuspended = false;
+
     @CreationTimestamp // Otomatis mengisi waktu saat data pertama kali dibuat
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

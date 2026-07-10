@@ -89,6 +89,15 @@ public class CartItemsService {
 
         var user = targetUser.get();
 
+        if (user.getIsSuspended()) {
+            return new ApiResponse<>(
+                    false,
+                    403,
+                    "Your account has been suspended",
+                    null
+            );
+        }
+
         var cartItem = new CartItems();
         cartItem.setUser(user);
         cartItem.setProduct(product);

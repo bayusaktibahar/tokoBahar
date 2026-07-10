@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddProductRequest {
-    private Long storeId;
     private String sku; // Stock Keeping Unit (Kode Unik Produk)
     private String name;
     private String description;

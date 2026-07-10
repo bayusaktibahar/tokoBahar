@@ -34,13 +34,13 @@ public class StoreController {
         return storeService.getStoreByName(name);
     }
 
-    @PostMapping("/Add")
+    @PostMapping("/add")
     @AuthCheck
     public ApiResponse<StoreDTO> addStore(@RequestBody AddStoreRequest addStoreRequest, @CurrentUser UserDTO currentUser){
         return storeService.addStore(addStoreRequest, currentUser);
     }
 
-    @PostMapping("/Update/{id}")
+    @PostMapping("/update/{id}")
     public ApiResponse<StoreDTO> updateStore(@PathVariable long id, @RequestBody UpdateStoreRequest updateStoreRequest){
         return storeService.updateStore(id, updateStoreRequest);
     }
@@ -49,5 +49,11 @@ public class StoreController {
     @AuthCheck
     public ApiResponse<StoreDTO> deleteStore(@PathVariable long id, @CurrentUser UserDTO currentUser ){
         return storeService.deleteStore(id,  currentUser);
+    }
+
+    @PatchMapping("/{id}/suspend")
+    @AuthCheck
+    public ApiResponse<StoreDTO> suspendStore(@PathVariable long id, @CurrentUser UserDTO currentUser) {
+        return storeService.suspendStore(id, currentUser);
     }
 }

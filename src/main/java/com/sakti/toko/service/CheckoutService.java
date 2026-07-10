@@ -2,6 +2,7 @@ package com.sakti.toko.service;
 
 import com.sakti.toko.data.entity.*;
 import com.sakti.toko.data.repository.*;
+import com.sakti.toko.model.dto.UserDTO;
 import com.sakti.toko.model.request.ApiResponse;
 import com.sakti.toko.model.request.CheckoutRequest;
 import lombok.AllArgsConstructor;
@@ -26,14 +27,14 @@ public class CheckoutService {
     private final UserRepository userRepository;
 
     @Transactional
-    public ApiResponse<String> checkout(CheckoutRequest checkoutRequest) {
+    public ApiResponse<String> checkout(CheckoutRequest checkoutRequest, UserDTO currentUser) {
 
-        var targetUser = userRepository.findById(checkoutRequest.getUser());
+        var targetUser = userRepository.findById(currentUser.getId());
 
         if (targetUser.isEmpty()) {
             return new ApiResponse<>(
                     false,
-                    403,
+                    404,
                     "User Not Found",
                     null
             );
@@ -41,12 +42,21 @@ public class CheckoutService {
 
         var user = targetUser.get();
 
+        if (user.getIsSuspended()) {
+            return new ApiResponse<>(
+                    false,
+                    403,
+                    "Your account has been suspended",
+                    null
+            );
+        }
+
         List <CartItems> cartItems = cartItemsRepository.findByUser(user);
 
         if (cartItems.isEmpty()) {
             return new ApiResponse<>(
                     false,
-                    403,
+                    404,
                     "Item In Your Cart Is Empty",
                     null
             );

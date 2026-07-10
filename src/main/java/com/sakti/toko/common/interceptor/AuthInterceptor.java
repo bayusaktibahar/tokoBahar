@@ -49,7 +49,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     private void writeUnauthorizedResponse(HttpServletResponse response) throws IOException {
         ApiResponse<List<Object>> apiResponse = new ApiResponse<>(
                 false,
-                403,
+                401,
                 "Lu Ga Punya Akses Kocak",
                 null);
 
