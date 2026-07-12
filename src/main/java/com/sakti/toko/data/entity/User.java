@@ -29,7 +29,7 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    @Column(nullable = false)
+    @Column
     private Boolean isSuspended = false;
 
     @CreationTimestamp // Otomatis mengisi waktu saat data pertama kali dibuat
