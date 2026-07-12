@@ -42,7 +42,7 @@ public class AuthService {
         if (!AESOperation.matches(loginRequest.getPassword(), user.getPassword())) {
             return new ApiResponse<>(
                     false,
-                    400, "Jir Eror Euy",
+                    400, "Your Password is incorrect",
                     null);
         }
 

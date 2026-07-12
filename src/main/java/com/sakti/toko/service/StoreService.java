@@ -36,7 +36,7 @@ public class StoreService {
         );
     }
 
-    public ApiResponse<StoreDTO> getStoreById(long storeId) {
+    public ApiResponse<StoreDTO> getStoreById(Long storeId) {
         var store = storeRepository.findById(storeId).orElseThrow();
 
         var result = storeDetailService.getStoreDetails(store);
@@ -103,7 +103,7 @@ public class StoreService {
     }
 
     @Transactional
-    public ApiResponse<StoreDTO> updateStore(long storeId, UpdateStoreRequest request) {
+    public ApiResponse<StoreDTO> updateStore(Long storeId, UpdateStoreRequest request) {
         var targetStore = storeRepository.findById(storeId);
 
         if (targetStore.isEmpty()) {
@@ -135,7 +135,7 @@ public class StoreService {
     }
 
     @Transactional
-    public ApiResponse<StoreDTO> deleteStore(long storeId, UserDTO currentUser) {
+    public ApiResponse<StoreDTO> deleteStore(Long storeId, UserDTO currentUser) {
         var targetStore = storeRepository.findById(storeId);
 
         if (targetStore.isEmpty()) {
@@ -171,7 +171,7 @@ public class StoreService {
     }
 
     @Transactional
-    public ApiResponse<StoreDTO> suspendStore(long storeId, UserDTO currentUser) {
+    public ApiResponse<StoreDTO> suspendStore(Long storeId, UserDTO currentUser) {
 
         if (!currentUser.getRole().equals(Role.ADMIN)) {
             return new ApiResponse<>(

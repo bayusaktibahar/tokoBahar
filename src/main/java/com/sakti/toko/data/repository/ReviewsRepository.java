@@ -2,6 +2,8 @@ package com.sakti.toko.data.repository;
 
 import com.sakti.toko.data.entity.Product;
 import com.sakti.toko.data.entity.Reviews;
+import com.sakti.toko.data.entity.Store;
+import com.sakti.toko.data.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,5 +18,9 @@ public interface ReviewsRepository extends JpaRepository<Reviews, Long> {
 
     List<Reviews> findByProduct(Product product);
 
+    List<Reviews> findByStore(Store store);
+
     List<Reviews> findByProduct_Id(Long productId);
+
+    Optional<Reviews> findByUserAndProduct(User user, Product product);
 }

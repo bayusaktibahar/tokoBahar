@@ -1,12 +1,10 @@
 package com.sakti.toko.service.details;
 
 import com.sakti.toko.data.entity.Product;
-import com.sakti.toko.data.entity.Reviews;
 import com.sakti.toko.data.repository.ReviewsRepository;
 import com.sakti.toko.model.dto.ProductDTO;
 import com.sakti.toko.model.dto.ReviewsDTO;
 import com.sakti.toko.model.dto.StoreDTO;
-import com.sakti.toko.model.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +15,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ProductDetailService {
 
-    private final UserDetailService userDetailService;
     private final StoreDetailService storeDetailService;
     private final ReviewsRepository reviewsRepository;
+    private final ReviewDetailService reviewDetailService;
 
     public ProductDTO getProductDetail(Product product) {
 
@@ -28,7 +26,7 @@ public class ProductDetailService {
         List<ReviewsDTO> reviews = reviewsRepository
                 .findByProduct(product)
                 .stream()
-                .map(this::getReviewDetail)
+                .map(reviewDetailService::getReviewDetail)
                 .collect(Collectors.toList());
 
         return ProductDTO.builder()
@@ -66,19 +64,4 @@ public class ProductDetailService {
     }
 
 
-    private ReviewsDTO getReviewDetail(Reviews review) {
-
-        UserDTO userDTO = userDetailService.getUserDetailWithoutSession(review.getUser());
-
-        StoreDTO storeDTO = storeDetailService.getStoreDetails(review.getStore());
-
-        return ReviewsDTO.builder()
-                .id(review.getId())
-                .userDTO(userDTO)
-                .storeDTO(storeDTO)
-                .rating(review.getRating())
-                .comment(review.getComment())
-                .createdAt(review.getCreatedAt())
-                .build();
-    }
 }
