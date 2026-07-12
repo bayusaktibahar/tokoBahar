@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 public class ReviewDetailService {
     private final UserDetailService userDetailService;
     private final StoreDetailService storeDetailService;
-    private final ProductDetailService productDetailService;
 
     public ReviewsDTO getReviewDetail(Reviews review) {
 
@@ -24,7 +23,16 @@ public class ReviewDetailService {
 
         StoreDTO storeDTO = storeDetailService.getStoreDetails(review.getStore());
 
-        ProductDTO productDTO = productDetailService.getProductDetailWithoutReview(review.getProduct());
+        ProductDTO productDTO = ProductDTO.builder()
+                .id(review.getProduct().getId())
+                .sku(review.getProduct().getSku())
+                .name(review.getProduct().getName())
+                .description(review.getProduct().getDescription())
+                .price(review.getProduct().getPrice())
+                .stock(review.getProduct().getStock())
+                .storeDTO(storeDetailService.getStoreDetails(review.getProduct().getStore()))
+                .reviews(null)
+                .build();
 
         return ReviewsDTO.builder()
                 .id(review.getId())
