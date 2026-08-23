@@ -28,10 +28,33 @@ public class AuthService {
     private final SessionService sessionService;
 
     public ApiResponse<UserDTO> login(LoginRequest loginRequest, HttpServletRequest  httpServletRequest) {
+
+        var trueEmail = loginRequest.getEmail();
+
+        if (trueEmail == null || loginRequest.getEmail().trim().isEmpty() || !loginRequest.getEmail().contains("@")) {
+            return new ApiResponse<>(
+                false,
+                403,
+                "Email invalid, format email anda salah atau kosong",
+                    null);
+        }
+
+        var truePassword = loginRequest.getPassword();
+
+        if (truePassword == null || loginRequest.getPassword().trim().isEmpty()) {
+            return new ApiResponse<>(
+                    false,
+                    403,
+                    "Password Cannot Empty",
+                    null
+            );
+        }
+
         var userOptional = userRepository.findByEmailIgnoreCase(loginRequest.getEmail());
 
         if (userOptional.isEmpty()) {
-            return new ApiResponse<>(false,
+            return new ApiResponse<>(
+                    false,
                     404,
                     "Email not found",
                     null);
@@ -70,10 +93,41 @@ public class AuthService {
     @Transactional
     public ApiResponse<UserDTO> register(RegisterRequest registerRequest) {
 
+        var trueEmail = registerRequest.getEmail();
+
+        if (trueEmail == null || registerRequest.getEmail().trim().isEmpty() || !registerRequest.getEmail().contains("@")) {
+            return new ApiResponse<>(
+                    false,
+                    403,
+                    "Email invalid, format email anda salah atau kosong",
+                    null);
+        }
+
+        var truePassword = registerRequest.getPassword();
+
+        if (truePassword == null || registerRequest.getPassword().trim().isEmpty()) {
+            return new ApiResponse<>(
+                    false,
+                    403,
+                    "Password Cannot Empty",
+                    null
+            );
+        }
+
         if (!registerRequest.getConfirmPassword().equals(registerRequest.getPassword())) {
             return new ApiResponse<>(false,
                     400,
-                    "Jir Password beda!!!!!",
+                    "Jir Password lu beda!!!!!",
+                    null
+            );
+        }
+
+        var existingEmail =  userRepository.findByEmailIgnoreCase(registerRequest.getEmail());
+
+        if (existingEmail.isPresent()  ) {
+            return new ApiResponse<>(false,
+                    400,
+                    "Jir Email lu udah ada di system kocak, login aja!!!!!",
                     null
             );
         }
@@ -83,6 +137,7 @@ public class AuthService {
                 .password(AESOperation.encode(registerRequest.getPassword()))
                 .role(Role.BUYER)
                 .createdAt(LocalDateTime.now())
+                .isSuspended(false)
                 .build();
 
         var savedUser = userRepository.save(user);
@@ -92,8 +147,18 @@ public class AuthService {
     }
 
     public ApiRequest logout(UserDTO userDTO) {
+        // 1. Cek jika userDTO null (Tanpa Token)
+        if (userDTO == null) {
+            return new ApiRequest(
+                    false,
+                    401,
+                    "U Have Login First Before Loging Out"
+            );
+        }
+
         String sessionId = userDTO.getSessionId();
 
+        // 2. Cek jika sessionId null
         if (sessionId == null) {
             return new ApiRequest(
                     false,
@@ -102,6 +167,19 @@ public class AuthService {
             );
         }
 
+        // 3. PERBAIKAN LOGIKA: Ambil data session
+        var session = sessionService.getSessionById(sessionId);
+
+        // Jika session tidak ditemukan/null ATAU session sudah expired (Logout kedua kali)
+        if (session == null || session.isExpired()) {
+            return new ApiRequest(
+                    false,
+                    401,
+                    "Your Session has expired"
+            );
+        }
+
+        // 4. Jika session valid dan aktif, hapus session (Logout sukses)
         sessionService.deleteSessionById(sessionId);
 
         return new ApiRequest(
@@ -109,7 +187,6 @@ public class AuthService {
                 200,
                 "ok"
         );
-
     }
 
 }

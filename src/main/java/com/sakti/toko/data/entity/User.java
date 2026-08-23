@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -35,4 +36,7 @@ public class User {
     @CreationTimestamp // Otomatis mengisi waktu saat data pertama kali dibuat
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Orders> orders;
 }

@@ -35,9 +35,20 @@ public class UserService {
     }
 
     public ApiResponse<UserDTO> getUserById(UUID id) {
-       var  user = userRepository.findById(id).orElseThrow();
+       Optional<User> userOptional = userRepository.findById(id);
 
-       var result = userDetailService.getUserDetailWithoutSession(user);
+        if (userOptional.isEmpty()) {
+            return new ApiResponse<>(
+                    false,
+                    404,
+                    "Account with ID is not Found",
+                    null
+            );
+        }
+
+        User userReal = userOptional.get();
+
+       var result = userDetailService.getUserDetailWithoutSession(userReal);
 
        return new ApiResponse<>(
                true,
@@ -50,6 +61,7 @@ public class UserService {
 
     @Transactional
     public ApiResponse<UserDTO> deleteUser(UUID id, UserDTO currentUser) {
+        // 1. Cek apakah user target ada di database
         var targetUser = userRepository.findById(id);
 
         if (targetUser.isEmpty()) {
@@ -61,6 +73,7 @@ public class UserService {
             );
         }
 
+        // 2. Pengecekan role ADMIN (Sudah lolos karena Anda login pakai admin)
         if (!currentUser.getRole().equals(Role.ADMIN)) {
             return new ApiResponse<>(
                     false,
@@ -70,9 +83,16 @@ public class UserService {
             );
         }
 
-        var userToDelete = targetUser.get();
+        // 3. PERBAIKAN: Hapus langsung menggunakan parameter 'id' dari URL,
+        // bukan menggunakan 'userToDelete.getId()' yang bisa memicu NullPointer
 
-        userRepository.deleteById(userToDelete.getId());
+        userRepository.deleteProductsByUserId(id);
+
+        userRepository.deleteStoresByUserId(id);
+
+        userRepository.deleteReviewsByUserId(id);
+
+        userRepository.deleteById(id);
 
         return new ApiResponse<>(
                 true,
@@ -80,9 +100,8 @@ public class UserService {
                 "User Deleted Successfully",
                 null
         );
-
-
     }
+
 
     @Transactional
     public ApiResponse<UserDTO> suspendUser(UUID id, UserDTO currentUser) {

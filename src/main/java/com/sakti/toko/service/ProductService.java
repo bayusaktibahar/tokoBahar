@@ -54,7 +54,7 @@ public class ProductService {
     public ApiResponse<ProductDTO> getProductByName(String productName) {
         var product = productRepository.findByName(productName).orElseThrow();
 
-        var result = productDetailService.getProductDetail(product);
+        var result = productDetailService.getProductDetail(product);    
 
         return new ApiResponse<>(
                 true,
