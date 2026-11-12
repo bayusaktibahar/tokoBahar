@@ -37,7 +37,18 @@ public class StoreService {
     }
 
     public ApiResponse<StoreDTO> getStoreById(Long storeId) {
-        var store = storeRepository.findById(storeId).orElseThrow();
+        var storeOptional = storeRepository.findById(storeId);
+
+        if (storeOptional.isEmpty()) {
+            return new ApiResponse<>(
+                    false,
+                    404,
+                    "Store Not Found",
+                    null
+            );
+        }
+
+        var store = storeOptional.get();
 
         var result = storeDetailService.getStoreDetails(store);
 
@@ -75,6 +86,17 @@ public class StoreService {
             );
         }
 
+        var nameOfStore = addStoreRequest.getStoreName();
+
+        if (nameOfStore == null || nameOfStore.trim().isEmpty() ) {
+            return new ApiResponse<>(
+                    false,
+                    403,
+                    "Cannot add Store with empty name",
+                    null
+            );
+        }
+
         var userStore = targetUser.get();
 
         var existingStore = storeRepository.findByUser(userStore);
@@ -103,7 +125,7 @@ public class StoreService {
     }
 
     @Transactional
-    public ApiResponse<StoreDTO> updateStore(Long storeId, UpdateStoreRequest request) {
+    public ApiResponse<StoreDTO> updateStore(Long storeId, UpdateStoreRequest request, UserDTO currentUser) {
         var targetStore = storeRepository.findById(storeId);
 
         if (targetStore.isEmpty()) {
@@ -111,6 +133,15 @@ public class StoreService {
                     false,
                     404,
                     "Store not found",
+                    null
+            );
+        }
+
+        if (!targetStore.get().getUser().equals(currentUser)) {
+            return new ApiResponse<>(
+                    false,
+                    403,
+                    "Thats not the same user and not your Store",
                     null
             );
         }

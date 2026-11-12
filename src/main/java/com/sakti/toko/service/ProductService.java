@@ -39,13 +39,24 @@ public class ProductService {
     }
 
     public ApiResponse<ProductDTO> getProductById(long productId) {
-        var product = productRepository.findById(productId).orElseThrow();
+        var productOptional = productRepository.findById(productId);
+
+        if (productOptional.isEmpty()) {
+            return new ApiResponse<>(
+                    false,
+                    404,
+                    "Product not found",
+                    null
+            );
+        }
+
+        var product = productOptional.get();
 
         var result = productDetailService.getProductDetail(product);
 
         return new ApiResponse<>(
                 true,
-                201,
+                200,
                 "Data Found",
                 result
         );
@@ -54,7 +65,7 @@ public class ProductService {
     public ApiResponse<ProductDTO> getProductByName(String productName) {
         var product = productRepository.findByName(productName).orElseThrow();
 
-        var result = productDetailService.getProductDetail(product);    
+        var result = productDetailService.getProductDetail(product);
 
         return new ApiResponse<>(
                 true,
@@ -96,6 +107,24 @@ public class ProductService {
                     false,
                     403,
                     "Your store has been suspended",
+                    null
+            );
+        }
+
+        if (addProductRequest.getPrice() == null || addProductRequest.getPrice().compareTo(java.math.BigDecimal.ZERO) <= 0) {
+            return new ApiResponse<>(
+                    false,
+                    400,
+                    "Price must be greater than 0",
+                    null
+            );
+        }
+
+        if (addProductRequest.getStock() == null || addProductRequest.getStock() <= 0) {
+            return new ApiResponse<>(
+                    false,
+                    400,
+                    "Stock must be greater than 0",
                     null
             );
         }
@@ -228,7 +257,7 @@ public class ProductService {
 
         return new ApiResponse<>(
                 true,
-                204,
+                200,
                 "Data Deleted Successfully",
                 null
         );

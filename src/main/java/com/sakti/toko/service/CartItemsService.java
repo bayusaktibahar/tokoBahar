@@ -1,6 +1,5 @@
 package com.sakti.toko.service;
 
-
 import com.sakti.toko.data.entity.CartItems;
 import com.sakti.toko.data.repository.CartItemsRepository;
 import com.sakti.toko.data.repository.ProductRepository;
@@ -72,6 +71,15 @@ public class CartItemsService {
                     false,
                     403,
                     "Product Out Of Stock",
+                    null
+            );
+        }
+
+        if (addCartItemsRequest.getQuantity() < 1) {
+            return new ApiResponse<>(
+                    false,
+                    400,
+                    "Invalid quantity",
                     null
             );
         }

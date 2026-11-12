@@ -38,7 +38,7 @@ public class StoreController {
 
     @Operation(summary = "Get store by name")
     @GetMapping("/name")
-    public ApiResponse<StoreDTO> getStoreByName(String name){
+    public ApiResponse<StoreDTO> getStoreByName(@RequestParam(name = "name") String name){
         return storeService.getStoreByName(name);
     }
 
@@ -50,10 +50,12 @@ public class StoreController {
         return storeService.addStore(addStoreRequest, currentUser);
     }
 
-    @Operation(summary = "Update store", description = "Mengubah data toko.")
+    @Operation(summary = "Update store", description = "Mengubah nama toko.")
     @PostMapping("/update/{id}")
-    public ApiResponse<StoreDTO> updateStore(@PathVariable long id, @RequestBody UpdateStoreRequest updateStoreRequest){
-        return storeService.updateStore(id, updateStoreRequest);
+    @AuthCheck
+    @SecurityRequirement(name = "bearerAuth")
+    public ApiResponse<StoreDTO> updateStore(@PathVariable long id, @RequestBody UpdateStoreRequest updateStoreRequest, @Parameter(hidden = true) @CurrentUser UserDTO currentUser){
+        return storeService.updateStore(id, updateStoreRequest, currentUser);
     }
 
     @Operation(summary = "Delete store", description = "Menghapus toko milik sendiri.")

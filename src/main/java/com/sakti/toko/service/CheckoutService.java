@@ -123,7 +123,7 @@ public class CheckoutService {
 
         return new ApiResponse<>(
                 true,
-                201,
+                200,
                 "Checkout Successful",
                 parentOrderNumber
         );

@@ -14,7 +14,7 @@ public class AESOperation {
             byte[] hash = md.digest(saltedPass.getBytes());
             return Base64.getEncoder().encodeToString(hash);
         } catch (NoSuchAlgorithmException e ) {
-            throw new RuntimeException( "Jir Eror", e);
+            throw new RuntimeException( "Password Salah - Tidak Sesuai", e);
         }
     }
 
